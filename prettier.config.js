@@ -1,0 +1,21 @@
+module.exports = {
+    printWidth: 120,
+    tabWidth: 4,
+    useTabs: false,
+    semi: true,
+    singleQuote: true,
+    jsxSingleQuote: true,
+    trailingComma: 'all',
+    bracketSpacing: true,
+    jsxBracketSameLine: false,
+    arrowParens: 'always',
+    endOfLine: 'lf',
+    overrides: [
+        {
+            files: ['*.json', '*.yml', '.*.json', '.*.yml'],
+            options: {
+                tabWidth: 2,
+            },
+        },
+    ],
+};
