@@ -2,4 +2,4 @@ _td_database
 _td_files
 node_modules
 .env
-chats.json
+chats.js
