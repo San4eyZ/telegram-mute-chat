@@ -23,7 +23,7 @@ if (!allowedCommands.includes(command)) {
 switch (command) {
     case 'mute':
         connect()
-            .then(async (client) => Promise.all(chatIdsTomute.map((id) => muteChat(client, id))))
+            .then((client) => Promise.all(chatIdsTomute.map((id) => muteChat(client, id))))
             .catch(console.error)
             .finally(() => {
                 process.exit(0);
@@ -32,11 +32,37 @@ switch (command) {
         break;
     case 'unmute':
         connect()
-            .then(async (client) => Promise.all(chatIdsTomute.map((id) => unmuteChat(client, id))))
+            .then((client) => Promise.all(chatIdsTomute.map((id) => unmuteChat(client, id))))
             .catch(console.error)
             .finally(() => {
                 process.exit(0);
             });
 
         break;
+    case 'list':
+        connect()
+            .then(async (client) => {
+                const { chat_ids } = await client.invoke({
+                    _: 'getChats',
+                    limit: 100,
+                    offset_order: '9223372036854775807',
+                    offset_chat_id: 0,
+                });
+
+                return Promise.all(
+                    chat_ids
+                        .filter((id) => id < 0)
+                        .map(async (id) => {
+                            const chat = await client.invoke({
+                                _: 'getChat',
+                                chat_id: id,
+                            });
+
+                            return { id: chat.id, title: chat.title };
+                        }),
+                );
+            })
+            .then(console.log)
+            .catch(console.error)
+            .finally(() => process.exit(0));
 }
