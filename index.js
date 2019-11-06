@@ -6,7 +6,7 @@ dotenv.config({
 
 const { connect } = require('./lib/api/connect');
 const { muteChat, unmuteChat } = require('./lib/api/mute');
-const { chatIdsTomute, allowedCommands } = require('./config');
+const { chatsToMute, allowedCommands } = require('./config');
 
 const command = process.argv[2];
 
@@ -23,7 +23,12 @@ if (!allowedCommands.includes(command)) {
 switch (command) {
     case 'mute':
         connect()
-            .then((client) => Promise.all(chatIdsTomute.map((id) => muteChat(client, id))))
+            .then(async (client) => {
+                for (const { id, title } of chatsToMute) {
+                    await muteChat(client, id);
+                    console.log('muted: ', title);
+                }
+            })
             .catch(console.error)
             .finally(() => {
                 process.exit(0);
@@ -32,7 +37,12 @@ switch (command) {
         break;
     case 'unmute':
         connect()
-            .then((client) => Promise.all(chatIdsTomute.map((id) => unmuteChat(client, id))))
+            .then(async (client) => {
+                for (const { id, title } of chatsToMute) {
+                    await unmuteChat(client, id);
+                    console.log('umuted: ', title);
+                }
+            })
             .catch(console.error)
             .finally(() => {
                 process.exit(0);
