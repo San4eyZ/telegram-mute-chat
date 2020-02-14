@@ -20,9 +20,11 @@ if (!allowedCommands.includes(command)) {
     process.exit(1);
 }
 
+const connectionPromise = connect();
+
 switch (command) {
     case 'mute':
-        connect()
+        connectionPromise
             .then(async (client) => {
                 for (const { id, title } of chatsToMute) {
                     await muteChat(client, id);
@@ -36,11 +38,11 @@ switch (command) {
 
         break;
     case 'unmute':
-        connect()
+        connectionPromise
             .then(async (client) => {
                 for (const { id, title } of chatsToMute) {
                     await unmuteChat(client, id);
-                    console.log('umuted: ', title);
+                    console.log('unmuted: ', title);
                 }
             })
             .catch(console.error)
@@ -50,7 +52,7 @@ switch (command) {
 
         break;
     case 'list':
-        connect()
+        connectionPromise
             .then(async (client) => {
                 const { chat_ids } = await client.invoke({
                     _: 'getChats',
@@ -58,6 +60,8 @@ switch (command) {
                     offset_order: '9223372036854775807',
                     offset_chat_id: 0,
                 });
+
+                await client.in;
 
                 return Promise.all(
                     chat_ids
